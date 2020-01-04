@@ -17,7 +17,7 @@ int main()
    key_t shared_mem_key, semaphore_key;
    int shared_mem_id, semaphore_id;
 
-   fprintf(stderr, "\t\t\tWriter %d started\n", getpid());
+   fprintf(stderr, "  Writer %d started\n", getpid());
 
    shared_mem_key = ftok(".",'M');
    if (shared_mem_key == -1) {
@@ -35,7 +35,7 @@ int main()
       perror("Error: ftok (semaphore_key");
       exit(1);
    }
-   semaphore_id = semget(semaphore_key, 1, IPC_CREAT | 0666);
+   semaphore_id = semget(semaphore_key, 2, IPC_CREAT | 0666);
    if (semaphore_id == -1) {
       perror("Error: semget (semaphore_id");
       exit(1);
@@ -47,7 +47,22 @@ int main()
       exit(1);
    }
 
+   semaphore_wait(semaphore_id, SEM_W, 0);
+   VAR_LC = VAR_LC + 1;
+   if (VAR_LC == 1) {
+      semaphore_wait(semaphore_id, SEM_SP, 0);
+   }
+   
+   semaphore_signal(semaphore_id, SEM_W);
+   fprintf(stderr, "  Writer %d doing operation\n", getpid());
+   semaphore_wait(semaphore_id, SEM_W, 0);
+   VAR_LC = VAR_LC - 1;
+   if (VAR_LC == 0) {
+      semaphore_signal(semaphore_id, SEM_SP);
+   }
+   semaphore_signal(semaphore_id, SEM_W);
+
    shmdt(pam);
 
-   fprintf(stderr, "\t\t\tWriter %d finished\n", getpid());
+   fprintf(stderr, "  Writer %d finished\n", getpid());
 }
