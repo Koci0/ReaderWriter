@@ -2,15 +2,31 @@
 
 A project for Operating Systems course at the Cracow University of Technology.
 
-It implements a Reader-Writer problem in C using semaphores with priority for readers.
+It implements a Reader-Writer problem in C using semaphores and shared memory with priority for readers.
 
 ### Prerequisites
 
-Implementation makes use of semphores (sys/sem.h) so a UNIX system is a must.
+Implementation makes use of UNIX IPC (semaphores, shared memory).
+Built with make and gcc.
 
 ## Getting Started
 
-Clone repository and build with make
+Clone repository
+```
+git clone https://github.com/Koci0/ReaderWriter
+cd ReaderWriter
+```
+
+Compile
+```
+make
+```
+
+Run
+```
+make run
+```
+
 
 ## Authors
 
