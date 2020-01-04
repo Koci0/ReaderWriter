@@ -28,7 +28,7 @@ int main()
 
     int i;
 
-    fprintf(stderr, "! MAIN: Started\n");
+    fprintf(stderr, "  MAIN: Started\n");
 
     shared_mem_key = ftok(".",'M');
     if (shared_mem_key == -1) {
@@ -61,24 +61,22 @@ int main()
         exit(1);
     }
         
-    for (i = 0; i < N_PROCESSES; i++) {
-        switch (fork()) {
-            case -1:
-                perror("Error: fork (mainprog, writer)");
-                exit(2);
-            case 0:
-                execl("./writer","writer", NULL);
-        }
-    }
-
     for (i=0; i<N_PROCESSES; i++) {
         switch (fork()) {
             case -1:
                 perror("Error: fork (mainprog, reader)\n");
                 exit(2);
             case 0:
-                execl("./reader","reader",NULL);
+                execl("./build/reader","reader",NULL);
             }
+
+        switch (fork()) {
+            case -1:
+                perror("Error: fork (mainprog, writer)");
+                exit(2);
+            case 0:
+                execl("./build/writer","writer", NULL);
+        }
     }
 
     for (i=0; i < 2 * N_PROCESSES; i++) {
@@ -88,7 +86,7 @@ int main()
     //zwalnianie zasobow
     shmctl(shared_mem_id, IPC_RMID, NULL);
     semctl(semaphore_id, 2, IPC_RMID);
-    fprintf(stderr, "! MAIN: Finished\n");
+    fprintf(stderr, "  MAIN: Finished\n");
 }
 
 void clean(int signal)

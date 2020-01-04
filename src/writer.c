@@ -17,7 +17,7 @@ int main()
    key_t shared_mem_key, semaphore_key;
    int shared_mem_id, semaphore_id;
 
-   fprintf(stderr, "  Writer %d started\n", getpid());
+   fprintf(stderr, "@ Writer %d started\n", getpid());
 
    shared_mem_key = ftok(".",'M');
    if (shared_mem_key == -1) {
@@ -54,7 +54,9 @@ int main()
    }
    
    semaphore_signal(semaphore_id, SEM_W);
-   fprintf(stderr, "  Writer %d doing operation\n", getpid());
+   fprintf(stderr, "@ Writer %d writes into %d\n", getpid(), WRITE);
+   pam[WRITE] = getpid();
+   WRITE = (WRITE + 1) % MAX_BUFFER;
    semaphore_wait(semaphore_id, SEM_W, 0);
    VAR_LC = VAR_LC - 1;
    if (VAR_LC == 0) {
@@ -64,5 +66,5 @@ int main()
 
    shmdt(pam);
 
-   fprintf(stderr, "  Writer %d finished\n", getpid());
+   fprintf(stderr, "@ Writer %d finished\n", getpid());
 }

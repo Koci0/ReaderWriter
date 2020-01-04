@@ -17,7 +17,7 @@ int main()
    key_t shared_mem_key, semaphore_key;
    int shared_mem_id, semaphore_id;
 
-   fprintf(stderr, "- Reader %d started\n", getpid());
+   fprintf(stderr, "$ Reader %d started\n", getpid());
 
    shared_mem_key = ftok(".",'M');
    if (shared_mem_key == -1) {
@@ -48,10 +48,11 @@ int main()
    }
 
    semaphore_wait(semaphore_id, SEM_SP, 0);
-   fprintf(stderr, "- Reader %d doing operation\n", getpid());
+   fprintf(stderr, "$ Reader %d reads memory:\n", getpid());
+   print_shared_memory(pam);
    semaphore_signal(semaphore_id, SEM_SP);
 
    shmdt(pam);
 
-   fprintf(stderr, "- Reader %d finished\n", getpid());
+   fprintf(stderr, "$ Reader %d finished\n", getpid());
 }
