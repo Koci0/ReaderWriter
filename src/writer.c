@@ -48,20 +48,11 @@ int main()
    }
 
    semaphore_wait(semaphore_id, SEM_W, 0);
-   VAR_LC = VAR_LC + 1;
-   if (VAR_LC == 1) {
-      semaphore_wait(semaphore_id, SEM_SP, 0);
-   }
-   
-   semaphore_signal(semaphore_id, SEM_W);
-   fprintf(stderr, "@ Writer %d writes into %d\n", getpid(), WRITE);
-   pam[WRITE] = getpid();
-   WRITE = (WRITE + 1) % MAX_BUFFER;
-   semaphore_wait(semaphore_id, SEM_W, 0);
-   VAR_LC = VAR_LC - 1;
-   if (VAR_LC == 0) {
-      semaphore_signal(semaphore_id, SEM_SP);
-   }
+
+   fprintf(stderr, "@ Writer %d writes at index %d\n", getpid(), WRITE_INDEX);
+   pam[WRITE_INDEX] = getpid();
+   WRITE_INDEX = (WRITE_INDEX + 1) % MAX_BUFFER;
+
    semaphore_signal(semaphore_id, SEM_W);
 
    shmdt(pam);

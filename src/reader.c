@@ -47,10 +47,22 @@ int main()
       exit(1);
    }
 
-   semaphore_wait(semaphore_id, SEM_SP, 0);
-   fprintf(stderr, "$ Reader %d reads memory:\n", getpid());
+   semaphore_wait(semaphore_id, SEM_W, 0);
+   WRITER_COUNTER = WRITER_COUNTER + 1;
+   if (WRITER_COUNTER == 1) {
+      semaphore_wait(semaphore_id, SEM_SP, 0);
+   }
+   semaphore_signal(semaphore_id, SEM_W);
+
+   fprintf(stderr, "@ Reader %d reads memory%d\n", getpid(), WRITE_INDEX);
    print_shared_memory(pam);
-   semaphore_signal(semaphore_id, SEM_SP);
+
+   semaphore_wait(semaphore_id, SEM_W, 0);
+   WRITER_COUNTER = WRITER_COUNTER - 1;
+   if (WRITER_COUNTER == 0) {
+      semaphore_signal(semaphore_id, SEM_SP);
+   }
+   semaphore_signal(semaphore_id, SEM_W);
 
    shmdt(pam);
 
