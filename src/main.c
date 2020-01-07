@@ -11,11 +11,14 @@
 #include <signal.h>
 
 #include "const.h"
+#include "utilities.h"
 
 void clean(int signal);
 
 int main()
 {
+    clean_file(FILENAME);
+
     struct sigaction action;
     action.sa_handler = clean;
     sigemptyset(&action.sa_mask);
@@ -35,7 +38,7 @@ int main()
         perror("Error: ftok (shared_mem_key");
         exit('B');
     }
-    shared_mem_id = shmget(shared_mem_key, MAX_IO*sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
+    shared_mem_id = shmget(shared_mem_key, BUFFER*sizeof(int), IPC_CREAT | IPC_EXCL | 0666);
         if (shared_mem_id == -1) {
         perror("Error: shmget (shared_mem_id)");
         exit('B');
@@ -93,7 +96,7 @@ void clean(int signal)
 {
     key_t shared_mem_key = ftok( ".",'M' );
     key_t semaphore_key = ftok( ".",'S' );
-    int shared_mem_id = shmget(shared_mem_key, MAX_IO*sizeof(int), IPC_CREAT | 0666);
+    int shared_mem_id = shmget(shared_mem_key, BUFFER*sizeof(int), IPC_CREAT | 0666);
     int semaphore_id = semget(semaphore_key, 2, IPC_CREAT | 0666);
 
     shmctl(shared_mem_id,IPC_RMID, NULL);

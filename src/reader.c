@@ -24,7 +24,7 @@ int main()
       perror("Error: ftok (shared_mem_key");
       exit(1);
    }
-   shared_mem_id = shmget(shared_mem_key, MAX_IO*sizeof(int), IPC_CREAT | 0666);
+   shared_mem_id = shmget(shared_mem_key, BUFFER*sizeof(int), IPC_CREAT | 0666);
    if (shared_mem_id == -1) {
       perror("Error: shmget (shared_mem_id)");
       exit(1);
@@ -48,18 +48,19 @@ int main()
    }
 
    semaphore_wait(semaphore_id, SEM_W, 0);
-   WRITER_COUNTER = WRITER_COUNTER + 1;
-   if (WRITER_COUNTER == 1) {
+   READER_COUNTER = READER_COUNTER + 1;
+   if (READER_COUNTER == 1) {
       semaphore_wait(semaphore_id, SEM_SP, 0);
    }
    semaphore_signal(semaphore_id, SEM_W);
 
-   fprintf(stderr, "@ Reader %d reads memory%d\n", getpid(), WRITE_INDEX);
-   print_shared_memory(pam);
+   fprintf(stderr, "$ Reader %d starts printing\n", getpid());
+   read_num_from_file(FILENAME);
+   fprintf(stderr, "$ Reader %d finished printing\n", getpid());
 
    semaphore_wait(semaphore_id, SEM_W, 0);
-   WRITER_COUNTER = WRITER_COUNTER - 1;
-   if (WRITER_COUNTER == 0) {
+   READER_COUNTER = READER_COUNTER - 1;
+   if (READER_COUNTER  == 0) {
       semaphore_signal(semaphore_id, SEM_SP);
    }
    semaphore_signal(semaphore_id, SEM_W);

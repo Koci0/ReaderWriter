@@ -71,3 +71,4 @@ dkms.conf
 
 build
 build/*.*
+*.txt

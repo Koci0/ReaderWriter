@@ -1,10 +1,10 @@
 
 #define N_PROCESSES 20
-#define MAX_BUFFER N_PROCESSES
-#define MAX_IO MAX_BUFFER+2
+#define BUFFER 1
 
-#define WRITE_INDEX pam[MAX_BUFFER]
-#define WRITER_COUNTER pam[MAX_BUFFER+1]
+#define READER_COUNTER pam[0]
 
 #define SEM_SP 0
 #define SEM_W 1
+
+#define FILENAME "output.txt"
