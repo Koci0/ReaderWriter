@@ -4,7 +4,7 @@
 #define MAX_IO MAX_BUFFER+2
 
 #define WRITE_INDEX pam[MAX_BUFFER]
-#define WRITER_COUNTER pam[MAX_BUFFER+1]
+#define READER_COUNTER pam[MAX_BUFFER+1]
 
 #define SEM_SP 0
 #define SEM_W 1
